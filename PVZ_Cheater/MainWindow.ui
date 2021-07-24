@@ -279,7 +279,14 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
-         <widget class="QGroupBox" name="gbPlantSunCount_2">
+         <widget class="QCheckBox" name="cbAllCardNoCD">
+          <property name="text">
+           <string>所有卡槽无冷却</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="gbCardCD">
           <property name="title">
            <string>冷却时间</string>
           </property>
@@ -371,6 +378,62 @@
         </item>
         <item>
          <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_3">
+       <attribute name="title">
+        <string>植物射速</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_7">
+        <item>
+         <widget class="QGroupBox" name="groupBox_3">
+          <property name="title">
+           <string>子弹射速</string>
+          </property>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QRadioButton" name="rbPlantBulletNormal">
+             <property name="text">
+              <string>正常</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="rbPlantBulletContinuouslyHasZ">
+             <property name="text">
+              <string>每次发射动作连续发射</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="rbPlantBulletContinuously">
+             <property name="statusTip">
+              <string>此操作极大可能导致游戏崩溃,谨慎选择</string>
+             </property>
+             <property name="text">
+              <string>一旦发射后便不停止</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer_3">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>

@@ -190,3 +190,76 @@ void MainWindow::on_rbSlowAutoCollectSun_toggled(bool checked)
             QMessageBox::critical(this, tr("警告"), tr("修改失败！"), QMessageBox::Ok);
     }
 }
+
+//植物子弹一直发射
+void MainWindow::on_rbPlantBulletContinuously_toggled(bool checked)
+{
+    if (checked) {
+        if (QMessageBox::question(this, tr("警告"), tr("此操作极大可能导致游戏崩溃，是否继续？"),
+                                  QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) != QMessageBox::Yes) {
+            ui->rbPlantBulletNormal->setChecked(true);
+            return;
+        }
+        LPVOID codeAddress = (LPVOID)0x46488F;      //mov [edi+00000090],eax  若eax是1则发射 89 87 90000000
+        LPVOID unusedCodeAddress = (LPVOID)0x6D709C;      //空白地址
+        BYTE instruction[6] = { 0xE9, 0x08, 0x28, 0x27, 0x00, 0x90 };   //E9 08282700 90   jmp 0x6D709C   nop  跳转到空白地址
+        //在空白地址写入了以下三条指令
+        //mov [edi+00000090],00000001
+        //jmp 00464895
+        //nop
+        BYTE instruction1[] = { 0xC7, 0x87, 0x90, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00
+                               , 0xE9, 0xEA, 0xD7, 0xD8, 0xFF
+                               , 0x90};
+        if (!(WriteProcessMemory(gameHandle, codeAddress, &instruction, sizeof(instruction), 0) &&
+                WriteProcessMemory(gameHandle, unusedCodeAddress, &instruction1, sizeof(instruction1), 0)))
+            QMessageBox::critical(this, tr("警告"), tr("修改失败！"), QMessageBox::Ok);
+    } else {
+        //取消 还原
+        LPVOID codeAddress = (LPVOID)0x46488F;      //mov [edi+00000090],eax  若eax是1则发射 89 87 90000000
+        LPVOID unusedCodeAddress = (LPVOID)0x6D709C;      //空白地址
+        BYTE instruction[6] = { 0x89, 0x87, 0x90, 0x00, 0x00, 0x00 };
+        BYTE instruction1[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+                                 , 0x00, 0x00, 0x00, 0x00, 0x00
+                                 , 0x00};
+        if (!(WriteProcessMemory(gameHandle, codeAddress, &instruction, sizeof(instruction), 0) &&
+                WriteProcessMemory(gameHandle, unusedCodeAddress, &instruction1, sizeof(instruction1), 0)))
+            QMessageBox::critical(this, tr("警告"), tr("修改失败！"), QMessageBox::Ok);
+    }
+}
+
+void MainWindow::on_rbPlantBulletContinuouslyHasZ_toggled(bool checked)
+{
+    if (checked) {
+        LPVOID codeAddress = (LPVOID)0x464A96;      //jne PlantsVsZombies.exe+64934  不是1则跳转不发射 0F85 98FEFFFF
+        BYTE instruction[6] = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };       //nop
+        if (!WriteProcessMemory(gameHandle, codeAddress, &instruction, sizeof(instruction), 0))
+            QMessageBox::critical(this, tr("警告"), tr("修改失败！"), QMessageBox::Ok);
+    } else {
+        //取消
+        LPVOID codeAddress = (LPVOID)0x464A96;      //jne PlantsVsZombies.exe+64934  不是1则跳转不发射 0F85 98FEFFFF
+        BYTE instruction[6] = { 0x0F, 0x85, 0x98, 0xFE, 0xFF, 0xFF };
+        if (!WriteProcessMemory(gameHandle, codeAddress, &instruction, sizeof(instruction), 0))
+            QMessageBox::critical(this, tr("警告"), tr("修改失败！"), QMessageBox::Ok);
+    }
+}
+
+void MainWindow::on_cbAllCardNoCD_stateChanged(int arg1)
+{
+    if (arg1 == Qt::Checked) {
+        LPVOID codeAddress = (LPVOID)0x488E73;      //mov byte ptr [ebp+48],00 赋值为0,重新冷却 C6 45 48 00
+        BYTE instruction[4] = { 0xC6, 0x45, 0x48, 0x01 };
+        if (!WriteProcessMemory(gameHandle, codeAddress, &instruction, sizeof(instruction), 0))
+            QMessageBox::critical(this, tr("警告"), tr("修改失败！"), QMessageBox::Ok);
+        else {
+            ui->pbCardCDDeltaDefault->click();
+            ui->gbCardCD->setEnabled(false);
+        }
+    } else {
+        //取消
+        LPVOID codeAddress = (LPVOID)0x488E73;      //mov byte ptr [ebp+48],00 赋值为0,重新冷却 C6 45 48 00
+        BYTE instruction[4] = { 0xC6, 0x45, 0x48, 0x00 };
+        if (!WriteProcessMemory(gameHandle, codeAddress, &instruction, sizeof(instruction), 0))
+            QMessageBox::critical(this, tr("警告"), tr("修改失败！"), QMessageBox::Ok);
+        else ui->gbCardCD->setEnabled(true);
+    }
+}

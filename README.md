@@ -1,21 +1,11 @@
 # Plants Vs Zombies Cheater
 
+## 主要原理
 
+1. 直接修改内存变量数值
+2. 修改游戏内存代码，如**add** [eax+00005560], ecx修改为**sub** [eax+00005560], ecx或**nop**实现**由减数值**变为**加数值或**数值**不变**
+3. 在游戏空白地址出写入代码，使程序跳转执行新代码
+4. 通过Windows API **FindWindow** 、**GetWindowThreadProcessId** 、**OpenProcess** 等获取游戏进程信息
+5. 通过Windows API **ReadProcessMemory**读取游戏内存，找到多级偏移指针
+6. 通过Windows API **WriteProcessMemory**写入数值或代码到游戏进程。用十六进制表示汇编代码，如80 7B 50 00代表**cmp** byte ptr [ebx+50], 00
 
-## License
-
-```
-Copyright 2021, SkyD666.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-```

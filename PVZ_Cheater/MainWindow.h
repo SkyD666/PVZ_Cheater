@@ -44,6 +44,12 @@ private slots:
 
     void on_rbSlowAutoCollectSun_toggled(bool checked);
 
+    void on_rbPlantBulletContinuously_toggled(bool checked);
+
+    void on_rbPlantBulletContinuouslyHasZ_toggled(bool checked);
+
+    void on_cbAllCardNoCD_stateChanged(int arg1);
+
 private:
     Ui::MainWindow *ui;
 
